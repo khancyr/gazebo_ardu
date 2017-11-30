@@ -9,6 +9,7 @@ project(gazebo_ardu)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   gazebo_ros
+  mavros
   rospy
   std_msgs
 )
@@ -105,7 +106,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES gazebo_ardu
-#  CATKIN_DEPENDS gazebo_ros rospy std_msgs
+  CATKIN_DEPENDS gazebo_ros rospy std_msgs
 #  DEPENDS system_lib
 )
 
@@ -165,7 +166,7 @@ include_directories(
 # )
 
 install(PROGRAMS
-        src/gazebo_ardu.py
+        src/${PROJECT_NAME}.py
         DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
         )
 ## Mark executables and/or libraries for installation
