@@ -11,7 +11,8 @@
         <arg name="use_sim_time" value="true"/>
     </include>
 
-    <arg name="fcu_url" default="udp://127.0.0.1:14550@14555"/>
+    <!--<arg name="fcu_url" default="udp://127.0.0.1:14550@14555"/>-->
+    <arg name="fcu_url" default="tcp://127.0.0.1:5762"/>
     <arg name="gcs_url" default=""/>
     <arg name="tgt_system" default="1"/>
     <arg name="tgt_component" default="1"/>
@@ -28,3 +29,4 @@
         <arg name="log_output" value="$(arg log_output)"/>
     </include>
 </launch>
+
