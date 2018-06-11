@@ -10,7 +10,7 @@
         <scene>
             <ambient>0.4 0.4 0.4 1</ambient>
             <background>0.7 0.7 0.7 1</background>
-            <shadows>1</shadows>
+            <shadows>0</shadows>
         </scene>
         <!-- A global light source -->
         <include>
@@ -34,6 +34,7 @@
                     <surface>
                         <contact>
                             <ode/>
+                            <collide_without_contact>true</collide_without_contact>
                         </contact>
                         <bounce/>
                         <friction>
@@ -75,6 +76,7 @@
                     <surface>
                         <contact>
                             <ode/>
+                            <collide_without_contact>true</collide_without_contact>
                         </contact>
                         <bounce/>
                         <friction>
@@ -116,6 +118,7 @@
                     <surface>
                         <contact>
                             <ode/>
+                            <collide_without_contact>true</collide_without_contact>
                         </contact>
                         <bounce/>
                         <friction>
@@ -157,6 +160,7 @@
                     <surface>
                         <contact>
                             <ode/>
+              		    <collide_without_contact>true</collide_without_contact>
                         </contact>
                         <bounce/>
                         <friction>
@@ -193,3 +197,4 @@
 
     </world>
 </sdf>
+

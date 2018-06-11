@@ -22,14 +22,14 @@ class GazeboArdu():
         self.model_state.model_name = self.model_name
 
     def run(self):
-        rate = rospy.Rate(60)
+        rate = rospy.Rate(100)
         while not rospy.is_shutdown():
             rate.sleep()
 
     def pose_callback(self, position):
         self.model_state.pose = position.pose
-        if self.model_state.pose.position.z < 0.1:
-            self.model_state.pose.position.z = 0.1
+        #if self.model_state.pose.position.z < 0.1:
+        #    self.model_state.pose.position.z = 0.1
         self.state_pub.publish(self.model_state)
 
 
@@ -40,3 +40,4 @@ if __name__ == '__main__':
         gzArdu.run()
     except rospy.ROSInterruptException:
         pass
+
