@@ -20,9 +20,10 @@ class GazeboArdu():
         self.model_name = "iris_demo"
         self.type = "Quadrotor"
         self.state = False
+	self.ns = rospy.get_namespace()
         self.state_pub = rospy.Publisher("/gazebo/set_model_state", ModelState, queue_size=10)
-        self.sub_pos = rospy.Subscriber("/mavros/local_position/pose", PoseStamped, self.pose_callback)
-        self.sub_state = rospy.Subscriber("/mavros/state", State, self.state_callback)
+        self.sub_pos = rospy.Subscriber(self.ns + "mavros/local_position/pose", PoseStamped, self.pose_callback)
+        self.sub_state = rospy.Subscriber(self.ns + "mavros/state", State, self.state_callback)
         self.vehicle_type_sub = None
 
 
@@ -33,6 +34,8 @@ class GazeboArdu():
 
     def run(self):
         mavros.set_namespace(mavros.DEFAULT_NAMESPACE)
+        rospy.wait_for_service(self.ns + mavros.get_topic('set_stream_rate'))
+        rospy.wait_for_service("/diagnostics")
         rate = rospy.Rate(40)
         while not rospy.is_shutdown():
             rate.sleep()
@@ -48,17 +51,23 @@ class GazeboArdu():
     def state_callback(self, state):
         if self.state is not state.connected:
             self.state = state.connected
-            set_rate = rospy.ServiceProxy(mavros.get_topic('set_stream_rate'), StreamRate)
-            set_rate(stream_id=StreamRateRequest.STREAM_ALL, message_rate=20, on_off=True)
+            print("Setting Rate for %s" % self.ns)
+            set_rate = rospy.ServiceProxy(self.ns + mavros.get_topic('set_stream_rate'), StreamRate)
+            try:
+                set_rate(stream_id=StreamRateRequest.STREAM_ALL, message_rate=20, on_off=True)
+            except rospy.ServiceException as ex:
+                fault(ex)
             self.vehicle_type_sub = rospy.Subscriber("/diagnostics", DiagnosticArray, self.type_callback)
 
 
     def type_callback(self, diag):
-        index1 = [diag.status.index(x) for x in diag.status if x.name == "mavros: Heartbeat"]
-        index2 = [diag.status[index1[0]].values.index(x) for x in diag.status[index1[0]].values if x.key == "Vehicle type"]
-        self.type = diag.status[index1[0]].values[index2[0]].value
-        if self.type in vehicle_type:
-            self.vehicle_type_sub.unregister()
+        index1 = [diag.status.index(x) for x in diag.status if x.name == (self.ns[1:] + "mavros: Heartbeat")]
+        if index1:
+            index2 = [diag.status[index1[0]].values.index(x) for x in diag.status[index1[0]].values if x.key == "Vehicle type"]
+            if index2:
+                self.type = diag.status[index1[0]].values[index2[0]].value
+                if self.type in vehicle_type:
+                    self.vehicle_type_sub.unregister()
 
 
 
